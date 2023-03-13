@@ -1,8 +1,7 @@
-from fastapi import FastAPI, HTTPException
-from starlette import status
-from fastapi.responses import HTMLResponse
-
 import uvicorn
+from fastapi import FastAPI, HTTPException
+from fastapi.responses import HTMLResponse
+from starlette import status
 
 from wake_on_lan import wake_machine, _ping
 
@@ -74,6 +73,7 @@ async def ping(ip: str, password: str):
 
         else:
             return {'detail': 'Ping failed'}
+
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=5000, log_level="info")
