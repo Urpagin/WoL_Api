@@ -1,5 +1,8 @@
 from fastapi import FastAPI, HTTPException
 from starlette import status
+from fastapi.responses import HTMLResponse
+
+import uvicorn
 
 from wake_on_lan import wake_machine, _ping
 
@@ -20,6 +23,29 @@ async def test_ip_pass_for_errors(ip: str, password: str) -> None:
     elif len(ip) > 15:
         raise HTTPException(detail='Error, ip is too long (15 chars max)',
                             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
+
+
+@app.get('/')
+async def read_root():
+    html = """
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+    <META NAME="robots" CONTENT="noindex,nofollow">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WoL API</title>
+</head>
+<body style="background-color:bisque"></body>
+<body>
+    <h1 style="font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif">
+    Welcome to the Wake on Lan Python API. Made by and for Urpagin.</h1>
+    
+</body>
+</html>
+    """
+    return HTMLResponse(html, status_code=200)
 
 
 @app.post('/wake')
@@ -48,3 +74,6 @@ async def ping(ip: str, password: str):
 
         else:
             return {'detail': 'Ping failed'}
+
+if __name__ == "__main__":
+    uvicorn.run("main:app", host="0.0.0.0", port=5000, log_level="info")
