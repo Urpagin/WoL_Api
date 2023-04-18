@@ -2,15 +2,17 @@ import uvicorn
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import HTMLResponse
 from starlette import status
+import hashlib
 
 from wake_on_lan import wake_machine, _ping
 
 app = FastAPI()
-PASSWORD = 'Uqv6VRd5MOUlGj3Vcavt1Zkid65OfntIAUcb9NgdnmFPRGU24O'
+HASHED_PASSWORD = '57da789e74193ee527fce5f555e5de65f87fdca7c0d428fda4ebfe8998cd3d384c5b357e697b9a1a533715b82a4316f5'
 
 
 async def test_ip_pass_for_errors(ip: str, password: str) -> None:
-    if password != PASSWORD:
+    if hashlib.sha384(password.encode('utf-8')).hexdigest() != HASHED_PASSWORD:
+        print(password)
         raise HTTPException(detail='Error, password is invalid',
                             status_code=status.HTTP_401_UNAUTHORIZED)
     elif not ip.isascii():
@@ -39,7 +41,7 @@ async def read_root():
 <body style="background-color:bisque"></body>
 <body>
     <h1 style="font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif">
-    Welcome to the Wake on Lan Python API. Made by and for Urpagin.</h1>
+    Congratulations, you are here!</h1>
     
 </body>
 </html>
@@ -69,10 +71,10 @@ async def ping(ip: str, password: str):
                             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
     else:
         if ping_resp:
-            return {'detail': 'Ping successful!'}
+            return {'detail': f'{ip} successfully responded!'}
 
         else:
-            return {'detail': 'Ping failed'}
+            return {'detail': f'{ip} did not respond!'}
 
 
 if __name__ == "__main__":
