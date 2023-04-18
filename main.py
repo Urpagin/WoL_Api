@@ -19,7 +19,6 @@ if not HASHED_PASSWORD:
 
 async def test_ip_pass_for_errors(ip: str, password: str) -> None:
     if hashlib.sha384(password.encode('utf-8')).hexdigest() != HASHED_PASSWORD:
-        print(password)
         raise HTTPException(detail='Error, password is invalid',
                             status_code=status.HTTP_401_UNAUTHORIZED)
     elif not ip.isascii():
