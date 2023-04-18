@@ -12,3 +12,4 @@ starlette==0.26.1
 typing_extensions==4.5.0
 uvicorn==0.21.1
 wakeonlan==3.0.0
+python-dotenv~=1.0.0

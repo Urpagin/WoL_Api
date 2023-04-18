@@ -1,13 +1,20 @@
+import os
+
 import uvicorn
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import HTMLResponse
 from starlette import status
 import hashlib
+from dotenv import load_dotenv
 
 from wol import wake_machine, _ping
 
 app = FastAPI()
-HASHED_PASSWORD = '57da789e74193ee527fce5f555e5de65f87fdca7c0d428fda4ebfe8998cd3d384c5b357e697b9a1a533715b82a4316f5'
+
+load_dotenv()
+HASHED_PASSWORD = os.getenv('HASHED_PASSWORD')
+if not HASHED_PASSWORD:
+    raise Exception('HASHED_PASSWORD is empty.')
 
 
 async def test_ip_pass_for_errors(ip: str, password: str) -> None:
