@@ -4,7 +4,7 @@ from fastapi.responses import HTMLResponse
 from starlette import status
 import hashlib
 
-from wake_on_lan import wake_machine, _ping
+from wol import wake_machine, _ping
 
 app = FastAPI()
 HASHED_PASSWORD = '57da789e74193ee527fce5f555e5de65f87fdca7c0d428fda4ebfe8998cd3d384c5b357e697b9a1a533715b82a4316f5'
@@ -78,4 +78,4 @@ async def ping(ip: str, password: str):
 
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=5000, log_level="info")
+    uvicorn.run("main:app", host="0.0.0.0", port=53562, log_level="info")
