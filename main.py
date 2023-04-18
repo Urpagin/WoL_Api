@@ -1,11 +1,11 @@
+import hashlib
 import os
 
 import uvicorn
+from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import HTMLResponse
 from starlette import status
-import hashlib
-from dotenv import load_dotenv
 
 from wol import wake_machine, _ping
 
