@@ -1,13 +1,20 @@
-from wakeonlan import send_magic_packet
+import polars
 from pythonping import ping
-from getmac import get_mac_address
+from wakeonlan import send_magic_packet
+
+from add_machine import AddMachine
 
 
-async def wake_machine(ip: str) -> None:
-    try:
-        send_magic_packet(get_mac_address(ip=ip))
-    except Exception:
-        raise Exception("Could not fetch the machine's mac address")
+async def wake_machine(ip: str, filename: str) -> None:
+    add_machine_obj = AddMachine(filename)
+    data: polars.Series = add_machine_obj.read_csv().to_dict()
+
+    for i, file_ip in enumerate(data['IP']):
+        if file_ip == ip:
+            send_magic_packet(data['MAC'][i])
+            return
+
+    raise Exception("Could not find the machine's mac address in database")
 
 
 async def _ping(ip: str) -> bool:

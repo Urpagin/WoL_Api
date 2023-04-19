@@ -1,25 +1,31 @@
 import hashlib
 import os
 
+import getmac
 import uvicorn
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
 from starlette import status
 
+from add_machine import AddMachine
 from wol import wake_machine, _ping
 
 app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 load_dotenv()
 HASHED_PASSWORD = os.getenv('HASHED_PASSWORD')
+MACHINES_FILENAME = 'machines.csv'
+
 if not HASHED_PASSWORD:
     raise Exception('HASHED_PASSWORD is empty.')
 
 
-async def test_ip_pass_for_errors(ip: str, password: str) -> None:
-    if hashlib.sha384(password.encode('utf-8')).hexdigest() != HASHED_PASSWORD:
-        raise HTTPException(detail='Error, password is invalid',
+async def check_ip_key(ip: str, key: str) -> None:
+    if hashlib.sha384(key.encode('utf-8')).hexdigest() != HASHED_PASSWORD:
+        raise HTTPException(detail='Error, key is invalid',
                             status_code=status.HTTP_401_UNAUTHORIZED)
     elif not ip.isascii():
         raise HTTPException(detail='Error, ip is invalid - not ascii',
@@ -34,32 +40,16 @@ async def test_ip_pass_for_errors(ip: str, password: str) -> None:
 
 @app.get('/')
 async def read_root():
-    html = """
-    <!DOCTYPE html>
-<html lang="en">
-<head>
-    <META NAME="robots" CONTENT="noindex,nofollow">
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WoL API</title>
-</head>
-<body style="background-color:bisque"></body>
-<body>
-    <h1 style="font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif">
-    Congratulations, you are here!</h1>
-    
-</body>
-</html>
-    """
-    return HTMLResponse(html, status_code=200)
+    with open('index.html', 'r') as f:
+        data = f.read()
+    return HTMLResponse(content=data, media_type="text/html", status_code=status.HTTP_200_OK)
 
 
 @app.post('/wake')
-async def wake(ip: str, password: str):
-    await test_ip_pass_for_errors(ip, password)
+async def wake(ip: str, key: str):
+    await check_ip_key(ip, key)
     try:
-        await wake_machine(ip)
+        await wake_machine(ip, MACHINES_FILENAME)
     except Exception as e:
         raise HTTPException(detail=str(e),
                             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -68,8 +58,8 @@ async def wake(ip: str, password: str):
 
 
 @app.get('/ping')
-async def ping(ip: str, password: str):
-    await test_ip_pass_for_errors(ip, password)
+async def ping(ip: str, key: str):
+    await check_ip_key(ip, key)
     try:
         ping_resp = await _ping(ip)
     except Exception as e:
@@ -81,6 +71,26 @@ async def ping(ip: str, password: str):
 
         else:
             return {'detail': f'{ip} did not respond!'}
+
+
+@app.put('/add-machine')
+async def add_machine(ip: str, key: str):
+    await check_ip_key(ip, key)
+    add_machine_obj = AddMachine(MACHINES_FILENAME, ip=ip)
+
+    if ip in add_machine_obj.read_csv()['IP']:
+        return {'detail': 'Ip already in database'}
+
+    mac = getmac.get_mac_address(ip=ip)
+    if not mac:
+        return {'detail': 'Could not fetch mac address'}
+    add_machine_obj.mac = mac
+    try:
+        add_machine_obj.add_machine()
+    except Exception as e:
+        return {'detail': f'Error: {e}'}
+    else:
+        return {'detail': f'Successfully added {ip}'}
 
 
 if __name__ == "__main__":
