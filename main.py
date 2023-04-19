@@ -17,7 +17,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 load_dotenv()
 HASHED_PASSWORD = os.getenv('HASHED_PASSWORD')
-MACHINES_FILENAME = 'machines.csv'
+MACHINES_FILENAME = 'machines.db'
 
 if not HASHED_PASSWORD:
     raise Exception('HASHED_PASSWORD is empty.')
@@ -76,21 +76,18 @@ async def ping(ip: str, key: str):
 @app.put('/add-machine')
 async def add_machine(ip: str, key: str):
     await check_ip_key(ip, key)
-    add_machine_obj = AddMachine(MACHINES_FILENAME, ip=ip)
-
-    if ip in add_machine_obj.read_csv()['IP']:
-        return {'detail': 'Ip already in database'}
+    add_machine_obj = AddMachine(MACHINES_FILENAME)
+    print(add_machine_obj.get_all_rows())
 
     mac = getmac.get_mac_address(ip=ip)
     if not mac:
-        return {'detail': 'Could not fetch mac address'}
-    add_machine_obj.mac = mac
+        return {'detail': 'Could not fetch the mac address'}
     try:
-        add_machine_obj.add_machine()
+        add_machine_obj.add_machine(ip, mac)
     except Exception as e:
         return {'detail': f'Error: {e}'}
     else:
-        return {'detail': f'Successfully added {ip}'}
+        return {'detail': f'Successfully added {ip} in database'}
 
 
 if __name__ == "__main__":

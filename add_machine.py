@@ -1,58 +1,48 @@
-import csv
-import os.path
-
-import polars as pl
+import sqlite3
+from dataclasses import dataclass
 
 
+@dataclass
 class AddMachine:
-    def __init__(self, filename: str, ip: str | None = None, mac: str | None = None) -> None:
-        self.filename = filename
-        self.ip = ip
-        self.mac = mac
+    filename: str
+    _table_name = 'machines'
 
-        self.create_csv()
-        self._verify_file()
+    def __post_init__(self) -> None:
+        self._create_db()
 
-    def _verify_file(self):
-        if not os.path.isfile(self.filename):
-            return
-        try:
-            df = pl.read_csv(self.filename)
-            _ = df['IP'], df['MAC']
-        except Exception:
-            self.create_csv(override=True)
+    def _create_db(self) -> None:
+        with sqlite3.connect(self.filename) as conn:
+            cursor = conn.cursor()
+            cursor.execute(f'CREATE TABLE IF NOT EXISTS {self._table_name} (ip text NOT NULL, mac text NOT NULL)')
 
-    def verify_file(self):
-
-        with open(self.filename, 'r', encoding='utf-8', newline='') as file:
-            data = file.readlines()
-        data[0] = 'IP,MAC\n'
-        with open(self.filename, 'w', encoding='utf-8') as file:
-            file.writelines(data)
-        try:
-            pl.read_csv(self.filename)
-        except Exception:
-            self.create_csv(override=True)
-
-    def create_csv(self, override: bool = False) -> None:
-        if os.path.isfile(self.filename) and not override:
-            return
-        with open(self.filename, 'w', encoding='utf-8', newline='') as file:
-            writer = csv.writer(file)
-            writer.writerow(('IP', 'MAC'))
-
-    def add_machine(self) -> None:
-        if self.ip is None:
+    def add_machine(self, ip: str, mac: str) -> None:
+        if not ip:
             raise Exception('Cannot add machine, ip is empty')
-        elif self.mac is None:
+        if not mac:
             raise Exception('Cannot add machine, mac is empty')
+        with sqlite3.connect(self.filename) as conn:
+            cursor = conn.cursor()
+            cursor.execute(f"SELECT * FROM {self._table_name} WHERE ip = ?", (ip,))
+            row = cursor.fetchone()
+            if row:
+                cursor.execute(f"UPDATE {self._table_name} SET mac = ? WHERE ip = ?", (mac, ip))
+            else:
+                cursor.execute(f"INSERT INTO {self._table_name} (ip, mac) VALUES (?, ?)", (ip, mac))
+            conn.commit()
 
-        with open(self.filename, 'a', encoding='utf-8', newline='') as file:
-            writer = csv.writer(file)
-            writer.writerow((self.ip, self.mac))
+    def contains_ip(self, value: str) -> list[tuple[str, str], ...] | list[None]:
+        """Returns a list of tuple(s) if value found, otherwise return empty list"""
+        with sqlite3.connect(self.filename) as conn:
+            cursor = conn.cursor()
+            # cursor.execute('SELECT * FROM {self._table_name} WHERE ip=:c', {'c': value})
+            cursor.execute(f'SELECT * FROM {self._table_name} WHERE ip=?', (value,))
+            ips_search: list = cursor.fetchall()
+            return ips_search
 
-    def read_csv(self) -> pl.dataframe.frame.DataFrame:
-        if not os.path.isfile(self.filename):
-            raise Exception('Cannot read file, file does not exist')
-
-        return pl.read_csv(self.filename)
+    def get_all_rows(self) -> list[tuple[str, str], ...] | list[None]:
+        """Returns a list of tuple[str, str] of all rows"""
+        with sqlite3.connect(self.filename) as conn:
+            cursor = conn.cursor()
+            cursor.execute(f'SELECT * FROM {self._table_name}')
+            ips_search: list = cursor.fetchall()
+            return ips_search
