@@ -5,6 +5,10 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+##custom start
+*.db
+## custom end
+
 # C extensions
 *.so
 
