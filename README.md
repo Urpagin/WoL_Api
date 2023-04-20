@@ -10,4 +10,4 @@ Python REST API that wakes a machine (that supports wol) from outside of the loc
 
 ![flag-india](https://user-images.githubusercontent.com/72459611/233224416-2acf770f-5706-4983-bbc2-fb2e78d30cd6.jpg)
 
-<a href="https://www.freepik.com/free-photo/flag-india_1179373.htm#query=india&position=16&from_view=search&track=sph">Image by www.slon.pics</a> on Freepik
+Image Credits: <a href="https://www.freepik.com/free-photo/flag-india_1179373.htm#query=india&position=16&from_view=search&track=sph">Image by www.slon.pics</a> on Freepik
