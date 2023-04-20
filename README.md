@@ -2,6 +2,10 @@
 
 Python REST API that wakes a machine (that supports wol) from outside of the local network.
 
+git clone 
+vim .env HASHED_PASSWORD=pass
+docker ...
+
 
 
 ![programming-background-with-person-working-with-codes-computer (1)](https://user-images.githubusercontent.com/72459611/233224334-12f22cf9-489b-4838-96ae-3dfb699e1a4f.jpg)
