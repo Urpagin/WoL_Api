@@ -12,8 +12,8 @@ docker run -d --network host --name <CONTAINERNAME> <IMAGE>
 ```
 <b>API Methods:</b>     
       
-`/`(GET): simple static HTTP to check the APi   
-`/wake`(POST): wakes a machine with `key` and `IP`   
+`/`(GET): simple static HTTP to check the API   
+`/wake`(POST): takes `key` and `ip` wakes a machine with pagic packet       
 `/ping`(GET): takes `key` and `ip` returns the ping response of the machine   
 `/add-machine`(PUT): takes `key` and `ip` gets the mac address of `ip` and ands the tuple (ip, mac) into database   
 `/database`(GET): takes `takes` returns the database content in the form of a list.   
