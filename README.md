@@ -2,15 +2,29 @@
 
 Python REST API that wakes a machine (that supports wol) from outside of the local network.
 
+### 🐳 Docker
 ```bash
-git clone
-cd WoL_Api
-vim .env # and populate the file with HASHED_KEY=<KEY>
-docker build -t urpagin/wol-api:0.0.6 .
-docker images
-docker run -d --network host --name <CONTAINERNAME> <IMAGE>
+git clone https://github.com/Urpagin/WoL_Api/
 ```
-<b>API Methods:</b>     
+```bash
+cd WoL_Api
+```
+```bash
+vim .env
+```
+Then populate .env with `HASHED_KEY=<HASHEDKEY>`
+```bash
+docker build -t urpagin/wol-api:0.0.1 .
+```
+```bash
+docker images
+```
+Then copy image ID
+```bash
+docker run -d --restart=always --network host --name wol-api <IMAGEID>
+```
+It's all good man. Now you can execute `docker ps` to show all running containers or `docker ps -a` to show all running and exited containers in case wol-api crashed.      
+### ⚙️ API
       
 `/`(GET): simple static HTTP to check the API   
 `/wake`(POST): takes `key` and `ip` wakes a machine with pagic packet       
@@ -18,8 +32,8 @@ docker run -d --network host --name <CONTAINERNAME> <IMAGE>
 `/add-machine`(PUT): takes `key` and `ip` gets the mac address of `ip` and ands the tuple (ip, mac) into database   
 `/database`(GET): takes `key` returns the database content in the form of a list.   
 
-Note: all responses are json `{"detail": "[RESPONSE]"}`   
-Note X2: must add the machine with `/add-machine` before trying to wake it with `/wake`
+Note: all responses are json `{"detail": <RESPONSE>}`   
+Note X2: before using `/wake` make sure you added the machine's mac address to the database with `/add-machine`
 
 
 ![programming-background-with-person-working-with-codes-computer (1)](https://user-images.githubusercontent.com/72459611/233224334-12f22cf9-489b-4838-96ae-3dfb699e1a4f.jpg)
