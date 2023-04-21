@@ -16,15 +16,15 @@ app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 load_dotenv()
-HASHED_PASSWORD = os.getenv('HASHED_PASSWORD')
+HASHED_KEY = os.getenv('HASHED_KEY')
 MACHINES_FILENAME = 'machines3.db'
 
-if not HASHED_PASSWORD:
+if not HASHED_KEY:
     raise Exception('HASHED_PASSWORD is empty.')
 
 
 async def verify_key(key: str) -> None:
-    if hashlib.sha384(key.encode('utf-8')).hexdigest() != HASHED_PASSWORD:
+    if hashlib.sha384(key.encode('utf-8')).hexdigest() != HASHED_KEY:
         raise HTTPException(detail='Error, key invalid',
                             status_code=status.HTTP_401_UNAUTHORIZED)
 
@@ -121,4 +121,4 @@ async def database(key: str):
 
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=53562, log_level="info")
+    uvicorn.run("main:app", host="0.0.0.0", port=5545, log_level="info")
