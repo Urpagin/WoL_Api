@@ -17,7 +17,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 load_dotenv()
 HASHED_KEY = os.getenv('HASHED_KEY')
-MACHINES_FILENAME = 'machines3.db'
+MACHINES_FILENAME = 'machines.db'
 
 if not HASHED_KEY:
     raise Exception('HASHED_PASSWORD is empty.')
