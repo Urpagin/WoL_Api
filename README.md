@@ -13,6 +13,7 @@ cd WoL_Api
 vim .env
 ```
 Then populate .env with `HASHED_KEY=<HASHEDKEY>`
+Use this webpage to hash your password using the SHA384 hashing algorithm
 ```bash
 docker build -t urpagin/wol-api:0.0.1 .
 ```
