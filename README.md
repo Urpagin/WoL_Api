@@ -18,7 +18,8 @@ docker run -d --network host --name <CONTAINERNAME> <IMAGE>
 `/add-machine`(PUT): takes `key` and `ip` gets the mac address of `ip` and ands the tuple (ip, mac) into database   
 `/database`(GET): takes `key` returns the database content in the form of a list.   
 
-Note: all responses are json {"detail": "[RESPONSE]"}   
+Note: all responses are json `{"detail": "[RESPONSE]"}`   
+Note X2: must add the machine with `/add-machine` before using `/wake`
 
 
 ![programming-background-with-person-working-with-codes-computer (1)](https://user-images.githubusercontent.com/72459611/233224334-12f22cf9-489b-4838-96ae-3dfb699e1a4f.jpg)
