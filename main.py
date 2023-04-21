@@ -77,7 +77,6 @@ async def ping(ip: str, key: str):
 async def add_machine(ip: str, key: str):
     await check_ip_key(ip, key)
     add_machine_obj = AddMachine(MACHINES_FILENAME)
-    print(add_machine_obj.get_all_rows())
 
     mac = getmac.get_mac_address(ip=ip)
     if not mac:
