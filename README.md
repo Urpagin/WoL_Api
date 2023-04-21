@@ -2,13 +2,26 @@
 
 Python REST API that wakes a machine (that supports wol) from outside of the local network.
 
+### 🐳 Docker
 ```bash
-git clone
+git clone https://github.com/Urpagin/WoL_Api/
+```
+```bash
 cd WoL_Api
-vim .env # and populate the file with HASHED_KEY=<KEY>
-docker build -t urpagin/wol-api:0.0.6 .
+```
+```bash
+vim .env
+```
+Then populate .env with `HASHED_KEY=<HASHEDKEY>`
+```bash
+docker build -t urpagin/wol-api:0.0.1 .
+```
+```bash
 docker images
-docker run -d --network host --name <CONTAINERNAME> <IMAGE>
+```
+Then copy image ID
+```bash
+docker run -d --restart=always --network host --name wol-api <IMAGEID>
 ```
 <b>API Methods:</b>     
       
