@@ -23,6 +23,7 @@ Then copy image ID
 ```bash
 docker run -d --restart=always --network host --name wol-api <IMAGEID>
 ```
+It's all good man. Now you can execute `docker ps` to show all running containers or `docker ps -a` to show all running and exited containers in case wol-api crashed.
 <b>API Methods:</b>     
       
 `/`(GET): simple static HTTP to check the API   
