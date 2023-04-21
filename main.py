@@ -60,7 +60,7 @@ async def verify_ip(ip: str) -> None:
 
 
 @app.get('/')
-async def read_root():
+async def root():
     with open('index.html', 'r') as f:
         data = f.read()
     return HTMLResponse(content=data, media_type="text/html", status_code=status.HTTP_200_OK)
