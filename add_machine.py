@@ -20,6 +20,8 @@ class AddMachine:
             raise Exception('Cannot add machine, ip is empty')
         if not mac:
             raise Exception('Cannot add machine, mac is empty')
+        if mac == '00:00:00:00:00:00':
+            raise Exception('Cannot add machine, mac is 00:00:00:00:00:00')
         with sqlite3.connect(self.filename) as conn:
             cursor = conn.cursor()
             cursor.execute(f"SELECT * FROM {self._table_name} WHERE ip = ?", (ip,))
