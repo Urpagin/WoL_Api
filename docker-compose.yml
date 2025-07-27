@@ -1,0 +1,8 @@
+services:
+  wol_api:
+    build: .
+    ports:
+      - "53562:5545"
+    restart: unless-stopped
+    env_file: '.env'
+

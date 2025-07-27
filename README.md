@@ -1,8 +1,11 @@
 # Wake on Lan API
 
-Python REST API that wakes a machine (that supports wol) from outside of the local network.
+Python REST API that wakes a machine (that supports wol) from outside the local network.
 
-### 🐳 Docker
+## Installation
+
+### 🐳 Docker Compose (recommended)
+
 ```bash
 git clone https://github.com/Urpagin/WoL_Api/
 ```
@@ -12,8 +15,20 @@ cd WoL_Api
 ```bash
 vim .env
 ```
-Then populate .env with `HASHED_KEY=<HASHEDKEY>`   
-Use [this webpage](https://emn178.github.io/online-tools/sha384.html) to hash your password using the SHA384 hashing algorithm.
+Then populate `.env` with `HASHED_KEY=<HASHEDKEY>`   
+Use [this webpage](https://emn178.github.io/online-tools/sha384.html) to hash your password using the **SHA384** hashing algorithm.
+
+```bash
+sudo docker compose up -d
+```
+
+
+### 🐳 Docker
+
+Follow steps in the [Docker Compose](#-docker-compose-recommended) section up to and including the `.env`.
+
+Then you can:
+
 ```bash
 docker build -t urpagin/wol-api:0.0.1 .
 ```
@@ -24,8 +39,29 @@ Then copy image ID
 ```bash
 docker run -d --restart=always --network host --name wol-api <IMAGEID>
 ```
-It's all good man. Now you can execute `docker ps` to show all running containers or `docker ps -a` to show all running and exited containers in case wol-api crashed.      
-### ⚙️ API
+
+### 🐍 Python
+
+Follow steps in the [Docker Compose](#-docker-compose-recommended) section up to and including the `.env`.
+
+Then you can:
+
+Install the dependencies.
+```bash
+pip install -r backend/requirements.txt
+```
+
+Run the program; make sure to run it from the root level, **not** inside `backend`
+```bash
+python backend/main.py
+```
+
+
+
+
+It's Saul Goodman. Now you can execute `docker ps` to show all running containers or `docker ps -a` to show all running and exited containers in case wol-api crashed.
+
+## ⚙️ API Specs
       
 `/`(GET): simple static HTTP to check the API   
 `/wake`(POST): takes `key` and `ip` wakes a machine with pagic packet       
