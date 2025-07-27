@@ -4,6 +4,9 @@ Python REST API that wakes a machine (that supports wol) from outside the local 
 
 ## Installation
 
+> [!NOTE]
+> We bake the `backend/.env` file into the Docker image, which is bad practice. I may fix it in the future.
+
 ### 🐳 Docker Compose (recommended)
 
 ```bash
